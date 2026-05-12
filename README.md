@@ -2,6 +2,8 @@
 
 Userscripts and helpers for the [TANSS](https://www.tanss.de) ticket system.
 
+> **Note:** Scripts in this repository are created with the help of AI.
+
 ## Tampermonkey userscripts
 
 All userscripts live in [`tampermonkey/`](./tampermonkey).
