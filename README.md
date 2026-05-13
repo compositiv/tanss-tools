@@ -3,6 +3,10 @@
 Userscripts and helpers for the [TANSS](https://www.tanss.de) ticket system.
 
 > **Note:** Scripts in this repository are created with the help of AI.
+>
+> **Disclaimer:** We review these scripts to the best of our knowledge, but we
+> provide them as-is and assume no liability for any damages or data loss
+> arising from their use. Use at your own risk.
 
 ## Tampermonkey userscripts
 
