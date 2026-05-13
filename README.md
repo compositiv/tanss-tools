@@ -18,7 +18,7 @@ Features:
 
 - Fixed right-hand sidebar with all checklists of the current ticket
 - Drag-resizable (width persisted in `localStorage`)
-- Collapsible (collapsed state persisted in `localStorage`)
+- Auto-collapses on tickets without checklists, auto-expands when they appear (manual toggle overrides until the next ticket)
 - Only activates on the ticket view (`section=bug&sub=view&bugID=...`)
 
 #### Installation

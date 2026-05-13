@@ -7,7 +7,7 @@
 // ==UserScript==
 // @name         tanss-checklist-rightside
 // @namespace    https://github.com/compositiv/tanss-tools
-// @version      2026-05-12.11-00
+// @version      2026-05-13.12-00
 // @updateURL    https://raw.githubusercontent.com/compositiv/tanss-tools/main/tampermonkey/tanss-checklist-rightside.user.js
 // @downloadURL  https://raw.githubusercontent.com/compositiv/tanss-tools/main/tampermonkey/tanss-checklist-rightside.user.js
 // @homepageURL  https://github.com/compositiv/tanss-tools
@@ -27,7 +27,6 @@
   const EMPTY_MSG_ID = "tcr-empty";
   const CHECKLIST_SELECTOR = ".tns-checklist-container";
   const LS_WIDTH = "tcr.width";
-  const LS_COLLAPSED = "tcr.collapsed";
   const MIN_WIDTH = 280;
   const MAX_WIDTH = 1200;
   const DEFAULT_WIDTH = 420;
@@ -155,6 +154,8 @@
   let content = null;
   let emptyMsg = null;
   let lastUrl = "";
+  let userToggledThisTicket = false;
+  let lastChecklistPresence = null;
 
   function isTicketView() {
     const p = new URLSearchParams(location.search);
@@ -167,12 +168,6 @@
     document.body.style.setProperty("--tcr-width", w + "px");
   }
 
-  function applyStoredCollapsed() {
-    const collapsed = localStorage.getItem(LS_COLLAPSED) === "1";
-    document.body.classList.toggle("tcr-collapsed", collapsed);
-    updateToggleIcon();
-  }
-
   function updateToggleIcon() {
     const btn = document.getElementById(TOGGLE_BTN_ID);
     if (!btn) return;
@@ -182,9 +177,15 @@
   }
 
   function toggleCollapsed() {
+    userToggledThisTicket = true;
     const next = !document.body.classList.contains("tcr-collapsed");
     document.body.classList.toggle("tcr-collapsed", next);
-    localStorage.setItem(LS_COLLAPSED, next ? "1" : "0");
+    updateToggleIcon();
+  }
+
+  function applyAutoCollapsed(hasChecklists) {
+    if (userToggledThisTicket) return;
+    document.body.classList.toggle("tcr-collapsed", !hasChecklists);
     updateToggleIcon();
   }
 
@@ -261,7 +262,7 @@
 
     setupResize(resizer);
     applyStoredWidth();
-    applyStoredCollapsed();
+    updateToggleIcon();
   }
 
   function updateEmptyMsg() {
@@ -289,8 +290,15 @@
     if (location.href !== lastUrl) {
       lastUrl = location.href;
       clearSidebar();
+      userToggledThisTicket = false;
+      lastChecklistPresence = null;
     }
     if (isTicketView()) {
+      const hasChecklists = document.querySelector(CHECKLIST_SELECTOR) !== null;
+      if (hasChecklists !== lastChecklistPresence) {
+        lastChecklistPresence = hasChecklists;
+        applyAutoCollapsed(hasChecklists);
+      }
       buildSidebar();
       document.body.classList.add("tcr-active");
       moveChecklists();
